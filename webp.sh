@@ -1,4 +1,3 @@
-
 if [ $# -eq 0 ]; then
   echo "Please provide a markdown file path as an argument."
   exit 1
