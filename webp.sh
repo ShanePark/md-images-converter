@@ -5,41 +5,33 @@ fi
 
 markdown_file="$1"
 assets_folder="${markdown_file%.md}.assets"
-temp_markdown_file="${markdown_file%.md}_temp.md"
 
-# Function to convert image files to WebP and delete original files
-convert_to_webp() {
+# Function to convert image files to WebP, rename, and delete original files
+convert_to_webp_and_rename() {
+  index=1
   for image_file in "$assets_folder"/*; do
     if [ -e "$image_file" ]; then
       extension="${image_file##*.}"
       
       if [ "$extension" != "webp" ]; then
-        webp_file="${image_file%.$extension}.webp"
+        webp_file="${assets_folder}/${index}.webp"
         
         if [ "$extension" == "gif" ]; then
-          gif2webp -q 60 "$image_file" -o "$webp_file" && rm "$image_file"
+          gif2webp "$image_file" -o "$webp_file" && rm "$image_file"
         else
-          cwebp -q 60 "$image_file" -o "$webp_file" && rm "$image_file"
+          cwebp "$image_file" -o "$webp_file" && rm "$image_file"
         fi
         
-        extensions_to_replace="$extensions_to_replace|$extension"
+        # Update the markdown file with the new image file name
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          sed -i '' -E "s!$(basename "$image_file")!$(basename "$webp_file")!g" "$markdown_file"
+        else
+          sed -i -E "s!$(basename "$image_file")!$(basename "$webp_file")!g" "$markdown_file"
+        fi
+        index=$((index+1))
       fi
     fi
   done
 }
 
-extensions_to_replace=""
-
-# Convert all non-WebP image files to WebP and delete original files
-convert_to_webp
-
-# Remove the leading '|' character from the list of extensions
-extensions_to_replace="${extensions_to_replace#|}"
-
-# Replace the image file extensions with .webp in the markdown file
-if [ -n "$extensions_to_replace" ]; then
-  sed -E "s/\.($extensions_to_replace)/.webp/g" "$markdown_file" > "$temp_markdown_file"
-
-  # Replace the original markdown file with the modified one
-  mv "$temp_markdown_file" "$markdown_file"
-fi
+convert_to_webp_and_rename
