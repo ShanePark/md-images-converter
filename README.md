@@ -1,36 +1,58 @@
-# Typora Markdown images into webp
+# Markdown Image Processor
 
-## requirements
+> Convert to WebP and Update Image Paths
+
+## Requirements
 
 ```bash
 brew install ack
 brew install webp
 ```
 
+## Overview
+
+This script automates the following tasks for Markdown files:
+
+1. **Convert images to WebP format:** All images in the `.assets` folder are converted to the WebP format to optimize file size and performance.
+2. **Update relative image paths:** Relative image paths in the Markdown file are replaced with absolute external paths, pointing to your GitHub repository for seamless web integration.
+
+By running this script, markdown files will be optimized for upload to GitHub with all image paths updated to direct links.
+
 ## Instrument
 
-1. find where the md file is
+### Step 1: Find Your Markdown File
+
+You can locate the Markdown file you wish to process by searching for specific content:
 
 ```bash
 ack 'blog post content text'
 ```
 
-2. execute shell
+### Step 2: Execute the Script
 
 ```bash
-./webp.sh myfile.md
+./mdblog.sh myfile.md
 ```
 
-Then it will 
+### Step 3: Results
 
-- convert all images in `.assets` into webp
-- change all image path in `.md` file into `.webp`
+The script performs the following:
 
-3. upload
+- **Convert Images to WebP:** All images in the `.assets` folder associated with the Markdown file will be converted to `.webp` format. The original files are deleted after conversion.
 
-That's it. now You can then upload your own enhanced md file and images
+- Update Image Paths in Markdown:
 
-## Batch
+  - Relative image paths like `](./watermark.assets/image.png)` are replaced with absolute paths pointing to my GitHub repository
+
+    ```
+    ](https://raw.githubusercontent.com/YourUsername/YourRepo/main/path/to/image.webp)
+    ```
+
+### Step 4: Upload Files
+
+Once the script has processed your files, you can upload the updated Markdown file and WebP images to your GitHub repository.
+
+## Batch Processing
 
 If you want to run it for all your `.md` files, use `md-worker.sh`
 
