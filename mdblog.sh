@@ -10,12 +10,16 @@ assets_folder="${markdown_file%.md}.assets"
 
 run_sed() {
   local pattern=$1
-  local sed_option='-i -E'
-  [[ "$OSTYPE" == "darwin"* ]] && sed_option='-i '' -E'
-  sed $sed_option "$pattern" "$markdown_file"
+  sed '-i '' -E' "$pattern" "$markdown_file"
 
+  # MacOS
   if [[ -e "${markdown_file}-E" ]]; then
     rm -f "${markdown_file}-E"
+  fi
+
+  # Linux
+  if [[ -e "${markdown_file}  -E" ]]; then
+    rm -f "${markdown_file}  -E"
   fi
 }
 
